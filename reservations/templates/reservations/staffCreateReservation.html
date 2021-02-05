@@ -1,0 +1,20 @@
+{% extends 'base_layout.html' %}
+
+{% block content%}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-4 mt-2 text-center">
+                <h2>Create Reservation</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="staff-create-reservation">
+        <form action="{% url 'reservations:staffCreateReservation' %}" method="post">
+            {% csrf_token %}
+            {{customer.id}}
+        </form>
+    </div>
+
+    {{statement}}
+{% endblock %}

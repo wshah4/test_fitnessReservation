@@ -1,0 +1,30 @@
+{% extends 'base_layout.html' %}
+
+{% block content%}
+    <div class="row" >
+        <form class=site-form action="{% url 'accounts:login' %}" method="post">
+            <h1>Log In</h1>
+            {% csrf_token %}
+            {{form}}
+            {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{request.GET.next}}">
+            {% endif %}
+            <input type="submit" value="Login">
+        </form>  
+    </div>
+{% endblock %}
+
+{% block signup %}
+<div class="jumbotron jumbotron-fluid" id="footer">
+    <div class="container">
+      <div class="row">
+        <div class="text-center col-md-8 col-12 mx-auto">
+          <p class="lead">Sign-up for an account in order to create reservations</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 col-auto mx-auto"> <a class="btn btn-block btn-lg btn-success" href="{% url 'accounts:signup' %}" title="">Sign up now!</a> </div>
+      </div>
+    </div>
+  </div>
+{% endblock%}

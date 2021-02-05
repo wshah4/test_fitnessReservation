@@ -1,0 +1,49 @@
+{% extends 'base_layout.html' %}
+
+{% block content%}
+
+    <div class="my-reservations-panel">
+
+        <table class="table table-bordered">
+            <thead class="thead">
+                <tr>
+                    <th scope="col">Class</th>
+                    <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
+                    <th scope="col">Day Of Week</th>
+                    <th scope="col">Reservation Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"></th>                    
+                </tr>
+            </thead>
+            <tbody class="tbody">
+                <tr>
+                    {% if reservations %}
+                        {% for i in reservations %}
+                            <tr>
+                                <td>{{i.classReserved.className}}</td>
+                                <td>{{i.classReserved.startTime}}</td>
+                                <td>{{i.classReserved.endTime}}</td>
+                                <td>{{i.classReserved.dayOfWeek}}</td>
+                                <td>{{i.classDate}}</td>
+                                <td>{{i.reservationStatus}}</td>
+                                <td>
+                                    <form class=cancel-form action="{% url 'reservations:myReservations' %}" method="post">
+                                        {% csrf_token %}
+                                        <input name="reservationId" type="hidden" value="{{i.id}}"></input>
+                                        <input type="submit" value="Cancel"></input>
+                                    </form> 
+                                </td>  
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No Reservations Made</td>  
+                    </tr>
+                    {% endif %} 
+                </tr>
+            </tbody>           
+        </table>
+    </div>
+  
+{% endblock %}

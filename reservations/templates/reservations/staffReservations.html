@@ -1,0 +1,238 @@
+{% extends 'base_layout.html' %}
+
+{% block content%}
+
+    <div class="table-holder">
+            {% if flag == True %}
+                <div class="classes-table">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th colspan="100%">Classes Offered</th>
+                        </tr>
+                        <tr>
+                            <th>Day</th>
+                            <th>Class Name</th>
+                            <th>Instructor</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th></th>
+                        </tr>
+                        {% for k,v in classList.items %}
+                            <tr>
+                                <td>{{v.dayOfWeek}}</td>
+                                <td>{{v.className}}</td>
+                                <td>{{v.instructorName}}</td>
+                                <td>{{v.startTime}}</td>
+                                <td>{{v.endTime}}</td>
+                                <td>
+                                    <form class="staff-class-selection" action="{% url 'reservations:staffReservations' %}" method="post">
+                                    {% csrf_token %}
+                                        <input name="classId" type="hidden" value="{{k}}"></input>
+                                        <input name="action" type="hidden" value=""></input>
+                                        <input type="submit" value="View Reservation"/>  
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>    
+            {% else %}
+                <div class="reservations-table">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th colspan="100%">
+                                {{className}}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="100%">Reserved List</th>
+                        </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Phone Number</th>
+                            <th>Date Reserved</th>
+                            <th></th>
+                        </tr>
+                        {% if reservedCounter > 0 %}
+                            {% for k, v in reservedList.items %}
+                                <tr>
+                                    <td>
+                                        {{forloop.counter}}
+                                    </td>
+                                    <td>
+                                        {{v.customerReserving.firstName}}
+                                    </td>
+                                    <td>
+                                        {{v.customerReserving.lastName}}
+                                    </td>
+                                    <td>
+                                        {{v.customerReserving.phoneNumber}}
+                                    </td>
+                                    <td>
+                                        {{v.reservationDate}}
+                                    </td>
+                                    <td>
+                                        <form action="{% url 'reservations:staffReservations' %}" method="post">
+                                            {% csrf_token %}
+                                            <input name="action" type="hidden" value="cancel"></input>
+                                            <input name="reservationId" type="hidden" value="{{k}}"></input>
+                                            <input name="classId" type="hidden" value="{{v.classReserved.id}}"></input>
+                                            <input type="submit" value="Cancel"/>
+                                        </form>
+                                    </td>                                    
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td>No Reservations</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+
+                {% if overDraftCounter > 0 %}
+                    <div class="reservations-table">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th colspan="100%">Overdraft List</th>
+                            </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Phone Number</th>
+                                <th>Date Reserved</th>
+                                <th></th>
+                            </tr>
+                            {% if overDraftCounter > 0 %}
+                                {% for k, v in overDraftList.items %}
+                                    <tr>
+                                        <td>
+                                            {{forloop.counter}}
+                                        </td>
+                                        <td>
+                                            {{v.customerReserving.firstName}}
+                                        </td>
+                                        <td>
+                                            {{v.customerReserving.lastName}}
+                                        </td>
+                                        <td>
+                                            {{v.customerReserving.phoneNumber}}
+                                        </td>
+                                        <td>
+                                            {{v.reservationDate}}
+                                        </td>
+                                        <td>
+                                            {% if classMaximum > reservedAndOverDraftTotal and reservedCounter != classMaximum %}
+                                                {% if forloop.first == 1 %}
+                                                    <form action="{% url 'reservations:staffReservations' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input name="action" type="hidden" value="overDraftToReserved"></input>
+                                                        <input name="reservationId" type="hidden" value="{{k}}"></input>
+                                                        <input name="classId" type="hidden" value="{{v.classReserved.id}}"></input>                                                    
+                                                        <input type="submit" value="Reserve in Main room"></input>
+                                                    </form>
+                                                {% endif %}
+                                            {% endif %}
+                                                    
+                                            <form action="{% url 'reservations:staffReservations' %}" method="post">
+                                                {% csrf_token %}
+                                                <input name="action" type="hidden" value="cancel"></input>
+                                                <input name="reservationId" type="hidden" value="{{k}}"></input>
+                                                <input name="classId" type="hidden" value="{{v.classReserved.id}}"></input>                                                
+                                                <input type="submit" value="Cancel"/>
+                                            </form>
+                                        </td>                                       
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="100%">No Over Draft Reservations</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                {% endif %}
+
+                <div class="reservations-table">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th colspan="100%">Wait List</th>
+                        </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Phone Number</th>
+                            <th>Date Reserved</th>
+                            <th></th>
+                        </tr>
+                        {% if waitListCounter > 0 %}
+                            {% for k, v in waitList.items %}
+                                <tr>
+                                    <td>
+                                        {{forloop.counter}}
+                                    </td>
+                                    <td>
+                                        {{v.customerReserving.firstName}}
+                                    </td>
+                                    <td>
+                                        {{v.customerReserving.lastName}}
+                                    </td>
+                                    <td>
+                                        {{v.customerReserving.phoneNumber}}
+                                    </td>
+                                    <td>
+                                        {{v.reservationDate}}
+                                    </td>
+                                    <td>
+                                        {% if overDraftCounter > 0 %}
+                                            {% if classMaximum > reservedAndOverDraftTotal and overDraftCounter < overDraftMaximum %}
+                                                {% if forloop.first %}
+                                                    <form action="{% url 'reservations:staffReservations' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input name="action" type="hidden" value="waitListToOverDraft"></input>
+                                                        <input name="reservationId" type="hidden" value="{{k}}"></input>
+                                                        <input name="classId" type="hidden" value="{{v.classReserved.id}}"></input>                                                    
+                                                        <input type="submit" value="Move To Over Draft Room"></input>
+                                                    </form>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% if classMaximum > reservedCounter %}
+                                                {% if forloop.first %}
+                                                    <form action="{% url 'reservations:staffReservations' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input name="action" type="hidden" value="waitListToReserved"></input>
+                                                        <input name="reservationId" type="hidden" value="{{k}}"></input>
+                                                        <input name="classId" type="hidden" value="{{v.classReserved.id}}"></input>                                                    
+                                                        <input type="submit" value="Reserve"></input>
+                                                    </form>                                            
+                                                {% endif %}                                            
+                                            {% endif %}
+                                        {% endif %}
+                                        <form action="{% url 'reservations:staffReservations' %}" method="post">
+                                            {% csrf_token %}
+                                            <input name="action" type="hidden" value="cancel"></input>
+                                            <input name="reservationId" type="hidden" value="{{k}}"></input>
+                                            <input name="classId" type="hidden" value="{{v.classReserved.id}}"></input>                                            
+                                            <input type="submit" value="Cancel"></input>
+                                        </form>
+                                    </td>                                       
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="100%">No Waitlisted Reservations</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            {% endif %}
+    </div>
+
+
+{% endblock %}
+

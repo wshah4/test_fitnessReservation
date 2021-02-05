@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>IDA LEE RESERVATION</title>  
+    <!-- Bootstrap -->
+	<link href="{% static 'css/style.css' %}" rel="stylesheet">    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-logo py-5">
+      <a href="{% url 'fitnessClass:schedule' %}"> 
+        <img class="logo" src="{% static 'images/logo.png' %}" alt="logo" />
+      </a>
+      <button class="navbar-toggler red-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto" id="navButtons">
+          {% if user.is_authenticated %}
+            <li>
+              <form action="{% url 'fitnessClass:schedule' %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-success my-2 my-sm-0 loginbtn" type="submit">Fitness Class Schedule</button>
+              </form> 
+            </li>          
+            {% if user.is_staff %}                    
+              <li>
+                <form action="{% url 'reservations:staffReservations' %}">
+                  {% csrf_token %}
+                  <button class="btn btn-outline-success my-2 my-sm-0 loginbtn" type="submit">View Reservations</button>
+                </form>  
+              </li>             
+            {% else %}
+              <li>
+                <form action="{% url 'reservations:myReservations' %}">
+                  {% csrf_token %}
+                  <button class="btn btn-outline-success my-2 my-sm-0 loginbtn" type="submit">My Reservations</button>
+                </form> 
+              </li>              
+            {% endif %} 
+            <li>
+              <form action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-success my-2 my-sm-0 loginbtn" type="submit">Log Out</button>
+              </form> 
+            </li>             
+          {% endif %}          
+        </ul>
+        </div>
+    </nav>
+    <header>
+        <div class="banner" >
+          <div class="row">
+            <div class="col-lg-12 mb-3 mt-1 text-center"><img class="imgmax" src="{% static 'images/int_top.jpg' %}" alt="banner" /></div>
+          </div>
+        </div>
+    </header>
+    <section>
+      <div>
+        <div class="row">
+          <div class="col-lg-12 mb-4 mt-2 text-center">
+            <h1>Fitness Class Reservation System</h1>
+          </div>
+        </div>
+      </div>
+        <div class="container">
+          <div class="main-block">    
+              {% block content %}
+              {% endblock %}
+          </div>
+        </div>              
+    </section>
+
+    {% block signup %}
+    {% endblock %}
+
+	  <!-- end body -->
+    <footer id="credits" class="text-center">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <p>60 Ida Lee Drive, NW | Leesburg, VA 20176 | 703-777-1368</p>
+			      <p>CREATED BY MATT KRISHNAN FOR IT CAPSTONE</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script> 
+    <!-- Include all compiled plugins (below), or include individual files as needed --> 
+    <script src="{% static 'js/popper.min.js' %}"></script> 
+    <script src="{% static 'js/bootstrap-4.4.1.js' %}"></script>
+  </body>
+</html>

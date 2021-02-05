@@ -1,0 +1,21 @@
+{% extends 'base_layout.html' %}
+
+{% block content%}
+    <h3>Signup page</h3>
+
+        <form class=signup-form action="{% url 'accounts:signup' %}" method="post">
+            <div class="signup-panel">
+                <div class="flex-child green">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <div class="vertical-line"></div>
+                <div class="flex-child orange">
+                    {% csrf_token %}
+                    {{ customerForm.as_p }}
+                </div>
+            </div>
+            <input class="create-button" type="submit" value="Create Account">
+        </form>
+        {{statement}}
+{% endblock %}

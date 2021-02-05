@@ -1,0 +1,97 @@
+{% extends 'base_layout.html' %}
+
+{% block content%}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-4 mt-2 text-center">
+                <h2>Confirm Reservation</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="reserve">
+        <div class="flex-child">
+            
+                <form id="reserve-form" action="{% url 'reservations:submission' %}" method="post">
+                {% csrf_token %}
+
+                <h3>{{className}}</h3>
+                <h5>{{instructorName}}</h5>
+                <h6>{{startTime}} - {{endTime}}</h6>
+                <h6>Todays Date = {{today}}</h6>
+
+                {% if currentUser.is_staff %}
+                    <p><label>First Name: </label>
+
+                        <input class="form-control" type="text" name="firstName"/>
+
+                    <label>Last Name: </label>                    
+                        <input class="form-control" type="text" name="lastName"/>
+                    
+                    <label>Phone Number: </label>                    
+                        <input class="form-control" type="phone" name="phoneNumber"/>                   
+                    <p>
+                        <label>Patronship: </label>
+                            <select name="patronship" id="patronship">
+                                <option selected disabled>- Choose One -</option>
+                                <option value="Annual">Annual Pass Holder</option>
+                                <option value="Town">Town Resident</option>
+                                <option value="None">Neither</option>
+                            </select>
+                    </p>
+                {% endif %}
+                <input name="submitted" type="hidden" value="True"></input>
+                <input name="className" type="hidden" value="{{className}}"></input>
+                <input name="startTime" type="hidden" value="{{startTime}}"></input>
+                <input name="endTime" type="hidden" value="{{endTime}}"></input>
+                <input name="instructorName" type="hidden" value="{{instructorName}}"></input>
+                <input name="dayOfWeek" type="hidden" value="{{dayOfWeek}}"></input>
+
+                <input name="classId" type="hidden" value="{{classId}}"></input>
+                <input name="classDate" type="hidden" value="{{classDate}}"></input>  
+                <input name="date" type="hidden" value="{{today}}"></input>
+            
+            {% if classPassedFlag == False %}
+                </form>
+                <p id="duplicate-message">{{classPassedMessage}}</p>
+                <p>
+                    {% if currentUser.is_staff %}
+                        <form action="{% url 'reservations:staffReservations' %}">
+                            <input type="submit" value="View Patron Reservations"/>
+                    {% else %}
+                        <form action="{% url 'reservations:myReservations' %}">
+                            <input type="submit" value="View Reservations"/>
+                    {% endif %}
+                    </form>
+                </p>
+            {% else %}
+                {% if duplicate == False %}
+                    <p><input type="submit" value="Reserve"></p>
+                    </form>
+                {% else %}
+                    </form>
+                    <p id="duplicate-message">{{duplicateMessage}}</p>
+                    <p>
+                        {% if currentUser.is_staff %}
+                            <form action="{% url 'reservations:staffReservations' %}">
+                                <input type="submit" value="View Patron Reservations"/>
+                        {% else %}
+                            <form action="{% url 'reservations:myReservations' %}">
+                                <input type="submit" value="View Reservations"/>
+                        {% endif %}
+                        </form>
+                    </p>
+                {% endif %}            
+            {% endif %}
+            <input type="button" value="Return to Class Schedule" onclick="history.back()">
+        </div>
+        <div class="flex-child">
+            <table id="availability-table">
+                <th>{{availabilityTitle}} on <br/>{{classDate}}</th>
+                <tr>
+                    <td>{{available}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}

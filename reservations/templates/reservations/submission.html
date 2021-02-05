@@ -1,0 +1,46 @@
+{% extends 'base_layout.html' %}
+
+{% block content%}
+
+    <div class="submission-holder">
+        <div class="ReservationOutput">
+            <table class="table table-bordered">
+                <th>
+                    <h2>Reservation Ticket</h2>
+                </th>
+                <tr>
+                    <td>
+                        <h6>
+                        <p>Reserved for: {{classDate}}</p>
+                        <p>Class Name: {{classReserved.className}}</p>
+                        <p>Instructor: {{classReserved.instructorName}}</p>
+                        <p>Class Time: {{classReserved.startTime}} - {{classReserved.endTime}}</p>
+                        <br/>
+                        <p>Patron Reserving: {{customerReserving.firstName}} {{customerReserving.lastName}}</p>
+                        {% if waitListPosition > 0 %}
+                            <p>Wait List Position: {{waitListPosition}}</p>
+                        {% else %}
+                            <p>{{reservationStatus}}</p>
+                        {% endif %}
+                        </h6>
+                    
+                        <input type="hidden" name="submitted" value="Nope"></input>
+                        <br/>
+                        {% if currentUser.is_staff %}
+                            <form  action="{% url 'reservations:staffReservations' %}" method="get">
+                                <input type="submit" value="View Patron Reservations">
+                            </form><br/>
+                        {% else %}
+                            <form  action="{% url 'reservations:myReservations' %}" method="get">
+                                <input type="submit" value="View Reservations">
+                            </form><br/>
+                        {% endif %}
+                            <form  action="{% url 'fitnessClass:schedule' %}" method="get">
+                                <input type="submit" value="View Class Schedule">
+                            </form>   
+                    </td>          
+                </tr>
+            </table>
+        </div> 
+    </div>
+{% endblock %}
